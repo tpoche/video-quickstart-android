@@ -852,12 +852,15 @@ class VideoActivity : AppCompatActivity() {
     }
 
     private fun retrieveAccessTokenfromServer() {
+        Log.d(TAG, "Retrieving access token from server: $ACCESS_TOKEN_SERVER")
         Ion.with(this)
                 .load("$ACCESS_TOKEN_SERVER?identity=${UUID.randomUUID()}")
-                .asString()
-                .setCallback { e, token ->
+                .`as`(TokenHolder::class.java)
+//                .asString()
+                .setCallback { e, tokenHolder ->
                     if (e == null) {
-                        this@VideoActivity.accessToken = token
+                        Log.d(TAG, "Received access token=$tokenHolder")
+                        this@VideoActivity.accessToken = tokenHolder.token
                     } else {
                         Toast.makeText(this@VideoActivity,
                                 R.string.error_retrieving_access_token, Toast.LENGTH_LONG)
@@ -940,4 +943,8 @@ class VideoActivity : AppCompatActivity() {
                 horizontalPadding,
                 0)
     }
+
+    data class TokenHolder(
+        val token: String
+    )
 }
